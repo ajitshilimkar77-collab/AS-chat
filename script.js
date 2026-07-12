@@ -3,14 +3,17 @@ import { auth, db } from "./firebase.js";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  onAuthStateChanged
+  onAuthStateChanged,
+  signOut
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
 import {
   collection,
   addDoc,
-  onSnapshot,
+  getDocs,
   query,
+  where,
+  onSnapshot,
   orderBy,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
@@ -24,6 +27,7 @@ const password = document.getElementById("password");
 
 const loginBtn = document.getElementById("loginBtn");
 const signupBtn = document.getElementById("signupBtn");
+const logoutBtn = document.getElementById("logoutBtn");
 
 const chat = document.getElementById("chat");
 const msg = document.getElementById("msg");
@@ -33,99 +37,90 @@ let currentUserName = "";
 
 // Create Account
 signupBtn.onclick = async () => {
-  try {
 
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      email.value,
-      password.value
-    );
-
-    currentUserName = name.value;
-
-    await addDoc(collection(db, "users"), {
-      uid: userCredential.user.uid,
-      name: name.value,
-      email: email.value
-    });
-
-    alert("Account Created Successfully");
-
-  } catch (e) {
-    alert(e.message);
+  if(name.value=="" || email.value=="" || password.value==""){
+      alert("Fill all fields");
+      return;
   }
+
+  try{
+
+      const user = await createUserWithEmailAndPassword(
+          auth,
+          email.value,
+          password.value
+      );
+
+      await addDoc(collection(db,"users"),{
+          uid:user.user.uid,
+          name:name.value,
+          email:email.value
+      });
+
+      currentUserName=name.value;
+
+      alert("Account Created Successfully");
+
+  }catch(err){
+
+      alert(err.message);
+
+  }
+
 };
 
 // Login
-loginBtn.onclick = async () => {
-  try {
+loginBtn.onclick = async ()=>{
 
-    await signInWithEmailAndPassword(
-      auth,
-      email.value,
-      password.value
-    );
+    try{
 
-    currentUserName = name.value;
+        await signInWithEmailAndPassword(
+            auth,
+            email.value,
+            password.value
+        );
 
-  } catch (e) {
-    alert(e.message);
-  }
-};
+    }catch(err){
 
-// Auth State
-onAuthStateChanged(auth, (user) => {
+        alert(err.message);
 
-  if(user){
-    loginPage.style.display = "none";
-    chatPage.style.display = "block";
-  }else{
-    loginPage.style.display = "block";
-    chatPage.style.display = "none";
-  }
-
-});
-
-// Send Message
-sendBtn.onclick = async () => {
-
-  if(msg.value.trim()=="") return;
-
-  await addDoc(collection(db,"messages"),{
-
-    text:msg.value,
-    sender: currentUserName || email.value,
-    senderEmail: auth.currentUser.email,
-    time:serverTimestamp()
-
-  });
-
-  msg.value="";
+    }
 
 };
 
-// Show Messages
-const q=query(collection(db,"messages"),orderBy("time"));
+// Logout
+logoutBtn.onclick=async()=>{
 
-onSnapshot(q,(snapshot)=>{
+    await signOut(auth);
 
-chat.innerHTML="";
+};
 
-snapshot.forEach((doc)=>{
+// Login State
+onAuthStateChanged(auth,async(user)=>{
 
-const data=doc.data();
+    if(user){
 
-const div=document.createElement("div");
+        loginPage.style.display="none";
+        chatPage.style.display="block";
 
-div.className="message";
+        const q=query(
+            collection(db,"users"),
+            where("uid","==",user.uid)
+        );
 
-div.innerHTML=`
-<b>${data.sender}</b><br>
-${data.text}
-`;
+        const snap=await getDocs(q);
 
-chat.appendChild(div);
+        snap.forEach((doc)=>{
 
-});
+            currentUserName=doc.data().name;
+
+        });
+
+    }else{
+
+        loginPage.style.display="block";
+        chatPage.style.display="none";
+
+    }
 
 });
