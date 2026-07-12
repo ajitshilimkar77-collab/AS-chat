@@ -160,6 +160,11 @@ const q = query(
     orderBy("time")
 );
 
+const q = query(
+    collection(db, "messages"),
+    orderBy("time")
+);
+
 onSnapshot(q, (snapshot) => {
 
     chat.innerHTML = "";
@@ -170,7 +175,11 @@ onSnapshot(q, (snapshot) => {
 
         const div = document.createElement("div");
 
-        div.className = "message";
+        if (auth.currentUser && data.senderEmail === auth.currentUser.email) {
+            div.className = "message myMessage";
+        } else {
+            div.className = "message otherMessage";
+        }
 
         div.innerHTML = `
             <b>${data.sender}</b><br>
