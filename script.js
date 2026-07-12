@@ -1,4 +1,3 @@
-
 import { auth, db } from "./firebase.js";
 
 import {
@@ -19,6 +18,7 @@ import {
 const loginPage = document.getElementById("loginPage");
 const chatPage = document.getElementById("chatPage");
 
+const name = document.getElementById("name");
 const email = document.getElementById("email");
 const password = document.getElementById("password");
 
@@ -29,15 +29,28 @@ const chat = document.getElementById("chat");
 const msg = document.getElementById("msg");
 const sendBtn = document.getElementById("sendBtn");
 
+let currentUserName = "";
+
 // Create Account
 signupBtn.onclick = async () => {
   try {
-    await createUserWithEmailAndPassword(
+
+    const userCredential = await createUserWithEmailAndPassword(
       auth,
       email.value,
       password.value
     );
-    alert("Account Created");
+
+    currentUserName = name.value;
+
+    await addDoc(collection(db, "users"), {
+      uid: userCredential.user.uid,
+      name: name.value,
+      email: email.value
+    });
+
+    alert("Account Created Successfully");
+
   } catch (e) {
     alert(e.message);
   }
@@ -46,11 +59,15 @@ signupBtn.onclick = async () => {
 // Login
 loginBtn.onclick = async () => {
   try {
+
     await signInWithEmailAndPassword(
       auth,
       email.value,
       password.value
     );
+
+    currentUserName = name.value;
+
   } catch (e) {
     alert(e.message);
   }
@@ -58,43 +75,57 @@ loginBtn.onclick = async () => {
 
 // Auth State
 onAuthStateChanged(auth, (user) => {
-  if (user) {
+
+  if(user){
     loginPage.style.display = "none";
     chatPage.style.display = "block";
-  } else {
+  }else{
     loginPage.style.display = "block";
     chatPage.style.display = "none";
   }
+
 });
 
 // Send Message
 sendBtn.onclick = async () => {
-  if (msg.value.trim() == "") return;
 
-  await addDoc(collection(db, "messages"), {
-    text: msg.value,
-    sender: auth.currentUser.email,
-    time: serverTimestamp()
+  if(msg.value.trim()=="") return;
+
+  await addDoc(collection(db,"messages"),{
+
+    text:msg.value,
+    sender: currentUserName || email.value,
+    senderEmail: auth.currentUser.email,
+    time:serverTimestamp()
+
   });
 
-  msg.value = "";
+  msg.value="";
+
 };
 
 // Show Messages
-const q = query(collection(db, "messages"), orderBy("time"));
+const q=query(collection(db,"messages"),orderBy("time"));
 
-onSnapshot(q, (snapshot) => {
-  chat.innerHTML = "";
+onSnapshot(q,(snapshot)=>{
 
-  snapshot.forEach((doc) => {
-    const d = document.createElement("div");
-    d.innerHTML =
-      "<b>" +
-      doc.data().sender +
-      "</b><br>" +
-      doc.data().text +
-      "<hr>";
+chat.innerHTML="";
 
-    chat.appendChild(d);
-  });
+snapshot.forEach((doc)=>{
+
+const data=doc.data();
+
+const div=document.createElement("div");
+
+div.className="message";
+
+div.innerHTML=`
+<b>${data.sender}</b><br>
+${data.text}
+`;
+
+chat.appendChild(div);
+
+});
+
 });
