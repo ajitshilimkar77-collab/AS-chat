@@ -1,4 +1,5 @@
 import { auth, db } from "./firebase.js";
+alert("Script Loaded");
 
 import {
   createUserWithEmailAndPassword,
@@ -86,21 +87,20 @@ signupBtn.onclick = async () => {
 // ===========================
 
 loginBtn.onclick = async () => {
+    alert("Login Clicked");
 
     try {
-
         await signInWithEmailAndPassword(
             auth,
             email.value,
             password.value
         );
 
+        alert("Login Success");
+
     } catch (e) {
-
-        alert(e.message);
-
+        alert(e.code + "\n" + e.message);
     }
-
 };
 
 // ===========================
