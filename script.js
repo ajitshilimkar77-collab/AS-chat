@@ -3,8 +3,8 @@ import { auth, db } from "./firebase.js";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut
+  signOut,
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
 import {
@@ -13,66 +13,81 @@ import {
   getDocs,
   query,
   where,
-  onSnapshot,
   orderBy,
+  onSnapshot,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
+// Pages
 const loginPage = document.getElementById("loginPage");
 const chatPage = document.getElementById("chatPage");
 
+// Inputs
 const name = document.getElementById("name");
 const email = document.getElementById("email");
 const password = document.getElementById("password");
 
-const loginBtn = document.getElementById("loginBtn");
-const signupBtn = document.getElementById("signupBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-
-const chat = document.getElementById("chat");
 const msg = document.getElementById("msg");
+
+// Buttons
+const signupBtn = document.getElementById("signupBtn");
+const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
 const sendBtn = document.getElementById("sendBtn");
 
-let currentUserName = "";
+// Chat
+const chat = document.getElementById("chat");
 
-// Create Account
+let currentUserName = "";
+// ===========================
+// SIGN UP
+// ===========================
+
 signupBtn.onclick = async () => {
 
-  if(name.value=="" || email.value=="" || password.value==""){
-      alert("Fill all fields");
-      return;
-  }
+    if (
+        name.value.trim() === "" ||
+        email.value.trim() === "" ||
+        password.value.trim() === ""
+    ) {
+        alert("Please fill all fields");
+        return;
+    }
 
-  try{
+    try {
 
-      const user = await createUserWithEmailAndPassword(
-          auth,
-          email.value,
-          password.value
-      );
+        const userCredential =
+            await createUserWithEmailAndPassword(
+                auth,
+                email.value,
+                password.value
+            );
 
-      await addDoc(collection(db,"users"),{
-          uid:user.user.uid,
-          name:name.value,
-          email:email.value
-      });
+        await addDoc(collection(db, "users"), {
 
-      currentUserName=name.value;
+            uid: userCredential.user.uid,
+            name: name.value,
+            email: email.value
 
-      alert("Account Created Successfully");
+        });
 
-  }catch(err){
+        alert("Account Created Successfully");
 
-      alert(err.message);
+    } catch (e) {
 
-  }
+        alert(e.message);
+
+    }
 
 };
 
-// Login
-loginBtn.onclick = async ()=>{
+// ===========================
+// LOGIN
+// ===========================
 
-    try{
+loginBtn.onclick = async () => {
+
+    try {
 
         await signInWithEmailAndPassword(
             auth,
@@ -80,117 +95,99 @@ loginBtn.onclick = async ()=>{
             password.value
         );
 
-    }catch(err){
+    } catch (e) {
 
-        alert(err.message);
+        alert(e.message);
 
     }
 
 };
 
-// Logout
-logoutBtn.onclick=async()=>{
+// ===========================
+// LOGOUT
+// ===========================
+
+logoutBtn.onclick = async () => {
 
     await signOut(auth);
 
 };
 
-// Login State
-onAuthStateChanged(auth,async(user)=>{
+// ===========================
+// AUTH STATE
+// ===========================
 
-    if(user){
+onAuthStateChanged(auth, async (user) => {
 
-        loginPage.style.display="none";
-        chatPage.style.display="block";
+    if (user) {
 
-        const q=query(
-            collection(db,"users"),
-            where("uid","==",user.uid)
+        loginPage.style.display = "none";
+        chatPage.style.display = "block";
+
+        const qUser = query(
+            collection(db, "users"),
+            where("uid", "==", user.uid)
         );
 
-        const snap=await getDocs(q);
+        const snap = await getDocs(qUser);
 
-        snap.forEach((doc)=>{
+        snap.forEach((doc) => {
 
-            currentUserName=doc.data().name;
+            currentUserName = doc.data().name;
 
         });
 
-    }else{
+    } else {
 
-        loginPage.style.display="block";
-        chatPage.style.display="none";
+        loginPage.style.display = "block";
+        chatPage.style.display = "none";
 
     }
 
 });
-// ----------------------------
-// Send Message
-// ----------------------------
+// ===========================
+// SEND MESSAGE
+// ===========================
 
 sendBtn.onclick = async () => {
 
-    if (msg.value.trim() == "") return;
+    if (msg.value.trim() === "") return;
 
-    await addDoc(collection(db, "messages"), {
+    try {
 
-        sender: currentUserName,
-        senderEmail: auth.currentUser.email,
-        text: msg.value,
+        await addDoc(collection(db, "messages"), {
 
-        time: serverTimestamp(),
+            sender: currentUserName,
+            senderEmail: auth.currentUser.email,
+            text: msg.value,
 
-        createdAt: new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit"
-        })
+            time: serverTimestamp(),
 
-    });
+            createdAt: new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit"
+            })
 
-    msg.value = "";
+        });
+
+        msg.value = "";
+
+    } catch (e) {
+
+        alert(e.message);
+
+    }
 
 };
 
-// ----------------------------
-// Show Messages
-// ----------------------------
+// ===========================
+// SHOW MESSAGES
+// ===========================
 
 const q = query(
     collection(db, "messages"),
     orderBy("time")
 );
-
-    chat.innerHTML = "";
-
-    snapshot.forEach((doc) => {
-
-        const data = doc.data();
-
-        const div = document.createElement("div");
-
-        if (auth.currentUser && data.senderEmail === auth.currentUser.email) {
-            div.className = "message myMessage";
-        } else {
-            div.className = "message otherMessage";
-        }
-
-        div.innerHTML = `
-            <b>${data.sender}</b><br>
-            ${data.text}
-            <br>
-            <small>${data.createdAt || ""}</small>
-        `;
-
-        chat.appendChild(div);
-
-    });
-
-    chat.scrollTop = chat.scrollHeight;
-
-});
-// ----------------------------
-// WhatsApp Style Chat Bubble
-// ----------------------------
 
 onSnapshot(q, (snapshot) => {
 
@@ -202,7 +199,10 @@ onSnapshot(q, (snapshot) => {
 
         const div = document.createElement("div");
 
-        if (data.senderEmail === auth.currentUser.email) {
+        if (
+            auth.currentUser &&
+            data.senderEmail === auth.currentUser.email
+        ) {
             div.className = "message myMessage";
         } else {
             div.className = "message otherMessage";
