@@ -2,35 +2,45 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💚 Bond Chat</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="style.css">
+<title>💚 Bond Chat</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link rel="manifest" href="manifest.json">
+
+<meta name="theme-color" content="#25D366">
+
 </head>
 
 <body>
 
-    <!-- Login Page -->
-    <div id="loginPage" class="login-box">
+<!-- LOGIN PAGE -->
+
+<div id="loginPage" class="loginPage">
+
+    <div class="loginBox">
 
         <h1>💚 Bond Chat</h1>
+
         <p>Stay Connected Forever ❤️</p>
 
         <input
-            id="name"
-            type="text"
-            placeholder="👤 Enter Your Name">
+        id="name"
+        type="text"
+        placeholder="👤 Enter Your Name">
 
         <input
-            id="email"
-            type="email"
-            placeholder="📧 Enter Email">
+        id="email"
+        type="email"
+        placeholder="📧 Enter Email">
 
         <input
-            id="password"
-            type="password"
-            placeholder="🔒 Enter Password">
+        id="password"
+        type="password"
+        placeholder="🔒 Enter Password">
 
         <button id="signupBtn">
             Create Account
@@ -42,57 +52,92 @@
 
     </div>
 
+</div>
 
-    <!-- Chat Page -->
+<!-- CHAT PAGE -->
 
-    <div id="chatPage" style="display:none;">
+<div id="chatPage" style="display:none;">
 
-        <header class="topbar">
+<header class="topBar">
 
-            <div class="profile">
+<div class="left">
 
-                <img
-                    src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                    id="profilePic">
+<img
+id="profilePic"
+src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
 
-                <div>
+<div>
 
-                    <h2>💚 Bond Chat</h2>
+<h2>💚 Bond Chat</h2>
 
-                    <small id="status">
-                        🟢 Online
-                    </small>
+<small id="status">
+🟢 Online
+</small>
 
-                </div>
+</div>
 
-            </div>
+</div>
 
-            <button id="logoutBtn">
-                Logout
-            </button>
+<div class="right">
 
-        </header>
+<button id="searchBtn">
+🔍
+</button>
 
+<button id="profileBtn">
+👤
+</button>
 
-        <div id="chat"></div>
+<button id="logoutBtn">
+🚪
+</button>
 
+</div>
 
-        <div class="bottom">
+</header>
 
-            <input
-                id="msg"
-                type="text"
-                placeholder="Type a message...">
+<!-- CHAT -->
 
-            <button id="sendBtn">
-                ➤
-            </button>
+<div id="chat"></div>
 
-        </div>
+<!-- MESSAGE BOX -->
 
-    </div>
+<div class="bottom">
 
-    <script type="module" src="script.js"></script>
+<button id="emojiBtn">
+😊
+</button>
+
+<input
+id="msg"
+type="text"
+placeholder="Type Message...">
+
+<button id="imageBtn">
+📷
+</button>
+
+<button id="sendBtn">
+➤
+</button>
+
+</div>
+
+</div>
+
+<script type="module" src="script.js"></script>
+
+<script>
+if("serviceWorker" in navigator){
+
+window.addEventListener("load",()=>{
+
+navigator.serviceWorker.register("./service-worker.js");
+
+});
+
+}
+</script>
 
 </body>
 
