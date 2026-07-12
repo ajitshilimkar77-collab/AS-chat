@@ -186,3 +186,37 @@ onSnapshot(q, (snapshot) => {
     chat.scrollTop = chat.scrollHeight;
 
 });
+// ----------------------------
+// WhatsApp Style Chat Bubble
+// ----------------------------
+
+onSnapshot(q, (snapshot) => {
+
+    chat.innerHTML = "";
+
+    snapshot.forEach((doc) => {
+
+        const data = doc.data();
+
+        const div = document.createElement("div");
+
+        if (data.senderEmail === auth.currentUser.email) {
+            div.className = "message myMessage";
+        } else {
+            div.className = "message otherMessage";
+        }
+
+        div.innerHTML = `
+            <b>${data.sender}</b><br>
+            ${data.text}
+            <br>
+            <small>${data.createdAt || ""}</small>
+        `;
+
+        chat.appendChild(div);
+
+    });
+
+    chat.scrollTop = chat.scrollHeight;
+
+});
