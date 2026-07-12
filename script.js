@@ -160,13 +160,6 @@ const q = query(
     orderBy("time")
 );
 
-const q = query(
-    collection(db, "messages"),
-    orderBy("time")
-);
-
-onSnapshot(q, (snapshot) => {
-
     chat.innerHTML = "";
 
     snapshot.forEach((doc) => {
