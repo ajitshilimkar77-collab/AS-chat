@@ -148,3 +148,32 @@ body{
     padding:10px 15px;
     border-radius:10px;
     }
+.myMessage{
+    background:#25D366;
+    color:#000;
+    margin-left:auto;
+    margin-right:5px;
+}
+
+.otherMessage{
+    background:#202c33;
+    color:#fff;
+    margin-right:auto;
+    margin-left:5px;
+}
+
+.message{
+    max-width:75%;
+    padding:10px;
+    border-radius:15px;
+    margin:10px;
+    word-break:break-word;
+}
+
+.message small{
+    display:block;
+    text-align:right;
+    margin-top:5px;
+    font-size:11px;
+    opacity:.8;
+}
