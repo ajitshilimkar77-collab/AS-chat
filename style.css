@@ -5,6 +5,40 @@ body{
     color:#fff;
 }
 
+/* Login Screen */
+.login-box{
+    width:90%;
+    max-width:350px;
+    margin:80px auto;
+    background:#1f1f1f;
+    padding:20px;
+    border-radius:15px;
+    text-align:center;
+    box-shadow:0 0 10px rgba(0,0,0,0.4);
+}
+
+.login-box input{
+    width:100%;
+    margin:10px 0;
+    padding:12px;
+    border:none;
+    border-radius:20px;
+    background:#2a2a2a;
+    color:#fff;
+    box-sizing:border-box;
+}
+
+.login-box button{
+    width:100%;
+    margin-top:10px;
+    background:#25D366;
+    color:#000;
+    border:none;
+    padding:12px;
+    border-radius:20px;
+    font-weight:bold;
+}
+
 h2{
     margin:0;
     padding:15px;
@@ -26,6 +60,7 @@ h2{
     margin:8px;
     max-width:70%;
     margin-left:auto;
+    word-wrap:break-word;
 }
 
 .bottom{
@@ -38,7 +73,7 @@ h2{
     box-sizing:border-box;
 }
 
-input{
+.bottom input{
     flex:1;
     padding:12px;
     border:none;
@@ -47,7 +82,7 @@ input{
     color:#fff;
 }
 
-button{
+.bottom button{
     margin-left:10px;
     background:#25D366;
     border:none;
