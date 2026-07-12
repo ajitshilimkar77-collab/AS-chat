@@ -124,3 +124,65 @@ onAuthStateChanged(auth,async(user)=>{
     }
 
 });
+// ----------------------------
+// Send Message
+// ----------------------------
+
+sendBtn.onclick = async () => {
+
+    if (msg.value.trim() == "") return;
+
+    await addDoc(collection(db, "messages"), {
+
+        sender: currentUserName,
+        senderEmail: auth.currentUser.email,
+        text: msg.value,
+
+        time: serverTimestamp(),
+
+        createdAt: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit"
+        })
+
+    });
+
+    msg.value = "";
+
+};
+
+// ----------------------------
+// Show Messages
+// ----------------------------
+
+const q = query(
+    collection(db, "messages"),
+    orderBy("time")
+);
+
+onSnapshot(q, (snapshot) => {
+
+    chat.innerHTML = "";
+
+    snapshot.forEach((doc) => {
+
+        const data = doc.data();
+
+        const div = document.createElement("div");
+
+        div.className = "message";
+
+        div.innerHTML = `
+            <b>${data.sender}</b><br>
+            ${data.text}
+            <br>
+            <small>${data.createdAt || ""}</small>
+        `;
+
+        chat.appendChild(div);
+
+    });
+
+    chat.scrollTop = chat.scrollHeight;
+
+});
