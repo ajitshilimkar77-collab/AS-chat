@@ -1,75 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💚 Bond Chat</title>
 
-<title>Bond Chat</title>
-
-<link rel="stylesheet" href="style.css">
-
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<!-- Login Page -->
-<div id="loginPage" class="login-box">
+    <!-- Login Page -->
+    <div id="loginPage" class="login-box">
 
-<h2>💚 Bond Chat</h2>
+        <h1>💚 Bond Chat</h1>
+        <p>Stay Connected Forever ❤️</p>
 
-<input
-id="name"
-type="text"
-placeholder="Enter Your Name">
+        <input
+            id="name"
+            type="text"
+            placeholder="👤 Enter Your Name">
 
-<br><br>
+        <input
+            id="email"
+            type="email"
+            placeholder="📧 Enter Email">
 
-<input
-id="email"
-type="email"
-placeholder="Enter Email">
+        <input
+            id="password"
+            type="password"
+            placeholder="🔒 Enter Password">
 
-<br><br>
+        <button id="signupBtn">
+            Create Account
+        </button>
 
-<input
-id="password"
-type="password"
-placeholder="Enter Password">
+        <button id="loginBtn">
+            Login
+        </button>
 
-<br><br>
+    </div>
 
-<button id="loginBtn">
-Login
-</button>
 
-<button id="signupBtn">
-Create Account
-</button>
+    <!-- Chat Page -->
 
-</div>
+    <div id="chatPage" style="display:none;">
 
-<!-- Chat Page -->
-<div id="chatPage" style="display:none;">
+        <header class="topbar">
 
-<h2>💚 Bond Chat</h2>
+            <div class="profile">
 
-<div id="chat"></div>
+                <img
+                    src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                    id="profilePic">
 
-<div class="bottom">
+                <div>
 
-<input
-id="msg"
-type="text"
-placeholder="Type a message...">
+                    <h2>💚 Bond Chat</h2>
 
-<button id="sendBtn">
-Send
-</button>
+                    <small id="status">
+                        🟢 Online
+                    </small>
 
-</div>
+                </div>
 
-</div>
+            </div>
 
-<script type="module" src="script.js"></script>
+            <button id="logoutBtn">
+                Logout
+            </button>
+
+        </header>
+
+
+        <div id="chat"></div>
+
+
+        <div class="bottom">
+
+            <input
+                id="msg"
+                type="text"
+                placeholder="Type a message...">
+
+            <button id="sendBtn">
+                ➤
+            </button>
+
+        </div>
+
+    </div>
+
+    <script type="module" src="script.js"></script>
 
 </body>
+
 </html>
